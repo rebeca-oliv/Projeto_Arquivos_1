@@ -39,8 +39,8 @@ void criar_arquivo_bin(){
   arq = fopen("estacao.csv", "r+");
 
   if (arq == NULL){
-    print("Falha no processamento de arquivo.");
-    return 0;
+    printf("Falha no processamento de arquivo.");
+    return;
   }
 
   // abertura do arquivo bin para escrita
@@ -49,7 +49,7 @@ void criar_arquivo_bin(){
 
   if (arqBin == NULL){
     printf("Falha no processamento de arquivo.");
-    return 0;
+    return;
   }
 
   // criação do Registro de Cabeçalho
@@ -61,9 +61,34 @@ void criar_arquivo_bin(){
   registro_cabecalho.nroParesEstacoes = 0;
 
   // inserção do registro de cabeçalho no bin
-  
-
+  fwrite(&registro_cabecalho, sizeof(RegistroCabecalho), 1, arqBin);
 
   fclose(arq);
   fclose(arqBin);
+}
+
+
+void ler_arquivo_bin(){
+  FILE *arqBin;
+  arqBin = fopen("estacao.bin", "rb");
+
+  if (arqBin == NULL){
+    printf("Falha no processamento do arquivo.");
+    return;
+  }
+
+  RegistroCabecalho registro_cabecalho;
+  if (fread(&registro_cabecalho, sizeof(RegistroCabecalho), 1, arqBin)){
+    printf("Status: %c, ProxRRN: %d", registro_cabecalho.status, registro_cabecalho.proxRRN);
+  } else {
+    printf("Erro ao ler.");
+  }
+
+  fclose(arqBin);
+  return;
+}
+
+int main(){
+  ler_arquivo_bin();
+  return 0;
 }

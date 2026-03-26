@@ -1,3 +1,5 @@
+/*
+
 #include <stdio.h>
 // Struct criada para o Registro de Cabeçalho - topo é um ponteiro que aponta para o topo da pilha
 typedef struct {
@@ -87,3 +89,5 @@ int main(){
 
   return 0;
 }
+
+*/
