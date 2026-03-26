@@ -1,0 +1,4 @@
+Etapa 1: Implementação de um comando estilo CREATE TABLE
+  - Fizemos a implementação de duas structs: uma para o registro de cabeçalho e outra para o registro de dados. Cada campo das structs foram desenvolvidas levando em conta as especificações do trabalho.
+
+  - Para criar esse "banco de dados" precisamos inserir os registros no nosso programa. Para isso, foi fornecido um arquivo chamado estacoes.csv, que contém todos os registros das estações. Dessa forma, é necessário realizar a leituras desses dados por meio de um fopen() para que seja possível exibí-los depois em um arquivo binário.

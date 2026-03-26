@@ -39,7 +39,7 @@ typedef struct {
 
 int main(){
   ///////////////////////////////////////////////
-  
+
   // declaração de ponteiro para  o arquivo 
   FILE *arq;
   // abertura de arquivo para leitura
@@ -58,16 +58,19 @@ int main(){
 
   /////////////////////////////////////////////////
 
-
+  // se não existir um arquivo com esse nome, ele vai criar
+  // teste para ver se está escrevendo no arquivo binário
   FILE *arqBin = fopen("estacao.bin", "wb");
   if (arqBin == NULL){
     printf("Falha no processamento de arquivo");
     return 0;
   }
+
   int numeros[5] = {10, 20, 30, 40, 50};
   fwrite(numeros, sizeof(int), 5, arqBin);
   fclose(arqBin);
 
+  // teste para ver se está lendo do arquivo binário
   arqBin = fopen("estacao.bin", "rb");
   if (arqBin == NULL){
     printf("Falha no processamento de arquivo");
