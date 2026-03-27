@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include "pilha.h"
 
 // Struct criado para o Registro de Cabeçalho 
 typedef struct {
