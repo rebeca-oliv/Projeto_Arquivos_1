@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "pilha.h"
+//#include "pilha.h"
 
 // Struct criado para o Registro de Cabeçalho 
 typedef struct {
@@ -63,7 +63,7 @@ void criar_arquivo_bin(char *nomeArq, char *nomeArqBin){
   regCab.nroParesEstacoes = 0;
 
   // inserção do registro de cabeçalho no arquivo bin
-  // ao invés de colcocar a struct inteira de uma vez, é melhor fazer assim para garantir os 17 bytes
+  // registro de cabeçalho com 17 bytes
   fwrite(&regCab.status, sizeof(char), 1, arqBin);
   fwrite(&regCab.topo, sizeof(int), 1, arqBin);
   fwrite(&regCab.proxRRN, sizeof(int), 1, arqBin);
@@ -71,6 +71,10 @@ void criar_arquivo_bin(char *nomeArq, char *nomeArqBin){
   fwrite(&regCab.nroParesEstacoes, sizeof(int), 1, arqBin);
 
   // TEM QUE FAZER: fazer a inserção dos dados no arquivo bin
+  // usa o fgets para ler do csv
+  // usar um buffer - alocar dinamicamente (dar free)
+  char linha[1024];
+
 
   fclose(arq);
   fclose(arqBin);
