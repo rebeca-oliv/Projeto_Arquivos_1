@@ -39,7 +39,17 @@ typedef struct {
 // seguindo o programa dos monitores
 RegistroDado ler_registro (FILE* arq ) //assinatura da função com a struct dos regsitros de dados 
 {
-  
+  char* buffer_registro = calloc(80, sizeof(char)); //buffer para o registro de dados de tam fixo de 80 bytes. 
+  // char porque char = 1 byte. 
+
+  char* buffer_registro_cont = buffer_registro; //buffer para contar 
+
+  fgets(buffer_registro, 80, arq); 
+
+  buffer_registro[strcspn(buffer_registro, "\r\n")] = '\0'; //tira o \n
+
+  char* codEstacao = parse_str_token(&buffer_registro_cont, ","); //aqui é para separar os campos por ,
+  //me perdi aqui
 }
 
 void criar_arquivo_bin(char *nomeArq, char *nomeArqBin){
