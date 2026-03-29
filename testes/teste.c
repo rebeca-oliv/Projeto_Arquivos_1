@@ -34,6 +34,14 @@ typedef struct {
     - leitura dos dados do arquivo csv
     - escrita dos dados no arquivo bin
 */
+
+//não sei onde essa função vai :(((
+// seguindo o programa dos monitores
+RegistroDado ler_registro (FILE* arq ) //assinatura da função com a struct dos regsitros de dados 
+{
+  
+}
+
 void criar_arquivo_bin(char *nomeArq, char *nomeArqBin){
   // abertura do arquivo csv para leitura
   FILE *arq;
@@ -43,6 +51,7 @@ void criar_arquivo_bin(char *nomeArq, char *nomeArqBin){
     printf("Falha no processamento de arquivo.");
     return;
   }
+
 
   // abertura do arquivo bin para escrita
   FILE *arqBin;
@@ -75,6 +84,9 @@ void criar_arquivo_bin(char *nomeArq, char *nomeArqBin){
   // usar um buffer - alocar dinamicamente (dar free)
   char linha[1024];
 
+
+  //não sei onde vai essa parte sos
+  //leitura do arq csv
 
   fclose(arq);
   fclose(arqBin);
