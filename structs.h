@@ -1,5 +1,8 @@
+#ifndef STRUCTS_H
+#define STRUCTS_H
+
 typedef struct {
-  char *status;
+  char status;
   int topo;
   int proxRRN;
   int nroEstacoes;
@@ -7,7 +10,7 @@ typedef struct {
 } RegistroCabecalho;
 
 typedef struct {
-  char *removido;
+  char removido;
   int proximo;
   int codEstacao;
   int codLinha;
@@ -22,15 +25,10 @@ typedef struct {
 } RegistroDado;
 
 /*! 
- * @brief Desaloca os campos dinâmicamente alocados do registro de dados.
+ * @brief Desaloca os campos dinâmicamente alocados do registro de dado.
  * 
- * @param r Registro cujos recursos devem ser liberados.
+ * @param r Registro de dado que precisa ser liberado.
  */
-void free_reg_dados(RegistroDado* r);
+void free_reg_dado(RegistroDado* r);
 
-/*! 
- * @brief Desaloca os campos dinâmicamente alocados do registro de cabeçalho.
- * 
- * @param h header cujos recursos devem ser liberados.
- */
-void free_reg_cab(RegistroCabecalho* h);
+#endif

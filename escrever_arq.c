@@ -13,7 +13,7 @@ void inicializar_cabecalho(RegistroCabecalho *h){
   h->nroParesEstacoes = 0;
 }
 
-void escreve_reg_cab_bin(FILE* arq, RegistroCabecalho* h){
+void escreve_reg_cab_bin(FILE* arq, RegistroCabecalho *h){
   // movendo o ponteiro para o início do arquivo
   fseek(arq, 0, SEEK_SET);
 
@@ -41,17 +41,19 @@ void escreve_reg_dado_bin(FILE* arq, const RegistroDado* r){
   // 1 (byte char) + 7 * 4 (byte int) = 29 bytes até aqui
   bytes_usados += 29;
 
-  int quantNomeEstacao = strlen(&r->nomeEstacao);
   fwrite(&r->tamNomeEstacao, sizeof(int), 1, arq);
-  fwrite(r->nomeEstacao, sizeof(char), quantNomeEstacao, arq);
+  if (r->nomeEstacao != NULL){
+    fwrite(r->nomeEstacao, sizeof(char), r->tamNomeEstacao, arq);
+  }
   // 4 (byte int) + quantidades de char que tem o nomeEstacao
-  bytes_usados = bytes_usados + 4 + quantNomeEstacao;
+  bytes_usados = bytes_usados + 4 + r->tamNomeEstacao;
 
-  int quantNomeLinha = strlen(&r->nomeLinha);
   fwrite(&r->tamNomeLinha, sizeof(int), 1, arq);
-  fwrite(r->nomeLinha, sizeof(char), quantNomeLinha, arq);
+  if (r->nomeLinha != NULL){
+    fwrite(r->nomeLinha, sizeof(char), r->tamNomeLinha, arq);
+  }
   // 4 (byte int) + quantidades de char que tem o nomeLinha
-  bytes_usados = bytes_usados + 4 + quantNomeLinha;
+  bytes_usados = bytes_usados + 4 + r->tamNomeLinha;
 
   // vai preencher os espaços vazios com $ até dar os 80 bytes
   while (bytes_usados < 80){

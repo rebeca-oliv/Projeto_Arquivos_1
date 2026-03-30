@@ -1,16 +1,10 @@
+#ifndef ESCREVER_ARQ_H
+#define ESCREVER_ARQ_H
+
 #include <string.h>
 #include <stdio.h>
 
 #include "structs.h"
-
-/*!
- * @brief Função auxiliar para checa se o valor recebido do arquivo csv é nulo.
- *
- * @param string Valor recebido do csv.
- *
- * @return Retorna um int com o valor -1 se nulo, ou com o valor especificado.
- */
-int verificar_nulo_fixo(char *string);
 
 /*!  
  * @brief Inicializar os valores iniciais do registro de cabeçalho.
@@ -30,7 +24,7 @@ void inicializar_cabecalho(RegistroCabecalho *cab);
  * 
  * @param h É o header que deseja escrever.
  */
-void escreve_reg_cab_bin(FILE* f, const RegistroCabecalho* h);
+void escreve_reg_cab_bin(FILE* arq, RegistroCabecalho *h);
 
 /*!  
  * @brief Escreve um registro em um arquivo binario.
@@ -43,3 +37,5 @@ void escreve_reg_cab_bin(FILE* f, const RegistroCabecalho* h);
  * @param r É o registro que deseja escrever.
  */
 void escreve_reg_dado_bin(FILE* f, const RegistroDado* r);
+
+#endif
