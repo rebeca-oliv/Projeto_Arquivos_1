@@ -1,3 +1,8 @@
+/*
+Karen Nanamy Kamo - NUSP: 15495932 
+Rebeca de Oliveira Silva - NUSP: 11963923
+*/
+
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -35,7 +40,7 @@ int main(){
       break;
     
     case 3:
-      buscar_reg_especifico();
+      buscar_reg_filtro();
       break;
 
     case 4:

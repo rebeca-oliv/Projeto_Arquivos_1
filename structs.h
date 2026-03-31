@@ -1,3 +1,8 @@
+/*
+Karen Nanamy Kamo - NUSP: 15495932 
+Rebeca de Oliveira Silva - NUSP: 11963923
+*/
+
 #ifndef STRUCTS_H
 #define STRUCTS_H
 

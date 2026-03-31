@@ -1,3 +1,8 @@
+/*
+Karen Nanamy Kamo - NUSP: 15495932 
+Rebeca de Oliveira Silva - NUSP: 11963923
+*/
+
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -62,7 +67,9 @@ void criar_arq_bin(){
   RegistroCabecalho *h = NULL;
   h = (RegistroCabecalho *) malloc(sizeof(RegistroCabecalho));
   if (h == NULL){
-    printf("Registro inexistente.\n");
+    fclose(arqCsv);
+    fclose(arqBin);
+    return;
   }
 
   inicializar_cabecalho(h);
@@ -73,36 +80,62 @@ void criar_arq_bin(){
   fgets(bf_lixo, sizeof(bf_lixo), arqCsv);
 
   // variáveis auxiliares para definir os valores finais do reg cab no final dos reg de dados
+  // 1. ações relacionadas ao contEstacoes
+  // 2. ações relacionadas ao contPares
   int contRRN = 0, contEstacoes = 0, contPares = 0;
 
-  // lista dos nomes das estações únicas
+  // 1. lista dos nomes das estações únicas
   char *estacoes[1000];
+
+  // 2. lista de vetores com os pares codEstacao e codProxEstacao
+  int paresUnicos[1000][2];
 
   while (check_eof(arqCsv)){
     RegistroDado r = ler_reg_dado_csv(arqCsv);
 
-    // precisa verificar se os nomes são iguais 
-    int jaTem = 0;
+    // 1. precisa verificar se os nomes são iguais 
+    int jaTemNome = 0;
     for (int i = 0; i < contEstacoes; i++){
       if (strcmp(r.nomeEstacao, estacoes[i]) == 0){
-        jaTem = 1;
+        jaTemNome = 1;
         break;
       }
     }
 
-    if (!jaTem){
-      // faz uma cópia para não ser apagado depois com o free
+    if (!jaTemNome){
+      // 1. faz uma cópia para não ser apagado depois com o free
       estacoes[contEstacoes] = strdup(r.nomeEstacao);
-      contEstacoes++;
+      contEstacoes++; // 1. soma toda vez que tem um nome único
+    }
+
+    // 2. precisa verificar se o par [codEstacao, codProxEstacao] já existe
+    int jaTemPar = 0;
+    if (r.codProxEstacao != -1){
+      for (int i = 0; i < contPares; i++){
+        // 2. verifica se já existe o par no vetor
+        if (paresUnicos[i][0] == r.codEstacao && paresUnicos[i][1] == r.codProxEstacao){
+          jaTemPar = 1;
+          break;
+        }
+      }
+
+      if (!jaTemPar){
+        // 2. salvando o novo par
+        paresUnicos[contPares][0] = r.codEstacao;
+        paresUnicos[contPares][1] = r.codProxEstacao;
+        contPares++;
+      }
     }
 
     escreve_reg_dado_bin(arqBin, &r);
+    // soma toda vez que tem um registro novo
     contRRN++;
 
     free_reg_dado(&r);
   }
 
-  h->status = '1';
+  // deve ser 1 depois de usar o arquivo para escrita
+  //h->status = '1';
   h->nroEstacoes = contEstacoes;
   h->proxRRN = contRRN; 
   h->nroParesEstacoes = contPares;
@@ -188,7 +221,10 @@ void imprimir_reg_cab(RegistroCabecalho *h){
 
 
 // Função para buscar o Registro de Cabeçalho
-void buscar_reg_cab_bin(const char *nomeArqBin){
+void buscar_reg_cab_bin(){
+  char nomeArqBin[100];
+  scanf("%s", nomeArqBin);
+
   // abrir arquivo binário para leitura
   FILE *arqBin = fopen(nomeArqBin, "rb");
   if (arqBin == NULL) {
@@ -236,15 +272,22 @@ void ScanQuoteString(char *str) {
 }
 
 
+// Função auxiliar para verificar se o valor é NULO
+int verificar_nulo(char *valor){
+  if (strcmp(valor, "NULO") == 0) return -1;
+  return atoi(valor);
+}
+
+
 // Funcionalidade 3
-void buscar_reg_especifico(){
+void buscar_reg_filtro(){
   char nomeArqBin[100];
   int quantBusca; 
   int quantPar; // armazena quantos pares o usuário quer
   
   // arrays para guardar os dados que devem ser filtrados
-  char nomesCampos[20][100];
-  char valoresCampos[20][100];
+  char nomesCampos[100][100];
+  char valoresCampos[100][100];
 
   scanf("%s %d", nomeArqBin, &quantBusca);
 
@@ -269,7 +312,15 @@ void buscar_reg_especifico(){
 
     for (int j = 0; j < quantPar; j++){
       scanf("%s", nomesCampos[j]);
-      ScanQuoteString(valoresCampos[j]);
+
+      if (strcmp(nomesCampos[j], "nomeEstacao") == 0 ||
+          strcmp(nomesCampos[j], "nomeLinha") == 0
+      ){
+        ScanQuoteString(valoresCampos[j]); // se for string
+      } else {
+        scanf("%s", valoresCampos[j]);  // se for int
+      }
+
     }
 
     // mover para o byte 17 para buscar nos dados
@@ -283,44 +334,51 @@ void buscar_reg_especifico(){
 
       // verificando se o registro está logicamente removido
       if (r != NULL && r->removido == '0'){
-        int achou = 1; // para verificar se bate com todos os dados especificados
+        int achou = 1; // para verificar se bate com todos os dados especificados, se não mudar, achou
 
         for (int b = 0; b < quantPar; b++){
 
           if (strcmp(nomesCampos[b], "codEstacao") == 0){
-            if (atoi(valoresCampos[b]) != r->codEstacao) achou = 0;
+            if (verificar_nulo(valoresCampos[b]) != r->codEstacao) achou = 0;
           }
 
           else if (strcmp(nomesCampos[b], "nomeEstacao") == 0){
-            if (strcmp(valoresCampos[b], r->nomeEstacao) != 0) achou = 0;
+            if (strcmp(valoresCampos[b], r->nomeEstacao) != 0){
+              achou = 0;
+            }
           }
 
           else if (strcmp(nomesCampos[b], "codLinha") == 0){
-            if (atoi(valoresCampos[b]) != r->codLinha) achou = 0;
+            if (verificar_nulo(valoresCampos[b]) != r->codLinha) achou = 0;
           }
 
           else if (strcmp(nomesCampos[b], "nomeLinha") == 0){
-            if (r->nomeLinha == NULL){
-              if (strcmp(valoresCampos[b], "") != 0) achou = 0;
-            } else {
-              if (strcmp(valoresCampos[b], r->nomeLinha) != 0) achou = 0;
+            // se usuário buscou por NULO
+            if (strcmp(valoresCampos[b], "") == 0){
+              // se o registro tem nome, não serve pois é NULO a busca
+              if (r->nomeLinha != NULL) achou = 0;
+            }
+            // se buscou por um nome real
+            else {
+              if (r->nomeLinha == NULL || strcmp(valoresCampos[b], r->nomeLinha) != 0)
+                achou = 0;
             }
           }
 
           else if (strcmp(nomesCampos[b], "codProxEstacao") == 0){
-            if (atoi(valoresCampos[b]) != r->codProxEstacao) achou = 0;
+            if (verificar_nulo(valoresCampos[b]) != r->codProxEstacao) achou = 0;
           }
 
           else if (strcmp(nomesCampos[b], "distProxEstacao") == 0){
-            if (atoi(valoresCampos[b]) != r->distProxEstacao) achou = 0;
+            if (verificar_nulo(valoresCampos[b]) != r->distProxEstacao) achou = 0;
           }
 
           else if (strcmp(nomesCampos[b], "codLinhaIntegra") == 0){
-            if (atoi(valoresCampos[b]) != r->codLinhaIntegra) achou = 0;
+            if (verificar_nulo(valoresCampos[b]) != r->codLinhaIntegra) achou = 0;
           }
             
           else if (strcmp(nomesCampos[b], "codEstIntegra") == 0){
-            if (atoi(valoresCampos[b]) != r->codEstIntegra) achou = 0;
+            if (verificar_nulo(valoresCampos[b]) != r->codEstIntegra) achou = 0;
           }
 
           // se já não atende a algum filtro, já para
@@ -338,7 +396,8 @@ void buscar_reg_especifico(){
 
     if (!encontrou_algum) printf("Registro inexistente.\n");
 
-    printf("\n");
+    // pular linha entre as buscas, menos no final
+    if (i < quantBusca - 1) printf("\n");
   }
   
   free_reg_cab(h);

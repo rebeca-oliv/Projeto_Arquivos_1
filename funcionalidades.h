@@ -1,3 +1,8 @@
+/*
+Karen Nanamy Kamo - NUSP: 15495932 
+Rebeca de Oliveira Silva - NUSP: 11963923
+*/
+
 #ifndef FUNCIONALIDADES_H
 #define FUNCIONALIDADES_H
 
@@ -20,7 +25,7 @@ void buscar_todos_reg_bin();
  * @brief Funcionalidade 3 para mostrar o registro buscado por dados especificados na entrada.
  *
  */
-void buscar_reg_especifico();
+void buscar_reg_filtro();
 
 
 /*!
@@ -29,6 +34,12 @@ void buscar_reg_especifico();
  */
 void buscar_reg_RRN();
 
+
+/*!
+ * @brief Busca os valores do registro de cabeçalho.
+ *
+ */
+void buscar_reg_cab_bin();
 
 
 /*!

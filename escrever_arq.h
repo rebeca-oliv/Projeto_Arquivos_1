@@ -1,3 +1,8 @@
+/*
+Karen Nanamy Kamo - NUSP: 15495932 
+Rebeca de Oliveira Silva - NUSP: 11963923
+*/
+
 #ifndef ESCREVER_ARQ_H
 #define ESCREVER_ARQ_H
 
