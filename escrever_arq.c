@@ -2,7 +2,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "escrever_arq.h"
 #include "structs.h"
 
 void inicializar_cabecalho(RegistroCabecalho *h){
@@ -38,19 +37,20 @@ void escreve_reg_dado_bin(FILE* arq, const RegistroDado* r){
   fwrite(&r->distProxEstacao, sizeof(int), 1, arq);
   fwrite(&r->codLinhaIntegra, sizeof(int), 1, arq);
   fwrite(&r->codEstIntegra, sizeof(int), 1, arq);
+
   // 1 (byte char) + 7 * 4 (byte int) = 29 bytes até aqui
   bytes_usados += 29;
 
   fwrite(&r->tamNomeEstacao, sizeof(int), 1, arq);
   if (r->nomeEstacao != NULL){
-    fwrite(r->nomeEstacao, sizeof(char), r->tamNomeEstacao, arq);
+    fwrite(r->nomeEstacao, sizeof(char), (size_t)r->tamNomeEstacao, arq);
   }
   // 4 (byte int) + quantidades de char que tem o nomeEstacao
   bytes_usados = bytes_usados + 4 + r->tamNomeEstacao;
 
   fwrite(&r->tamNomeLinha, sizeof(int), 1, arq);
   if (r->nomeLinha != NULL){
-    fwrite(r->nomeLinha, sizeof(char), r->tamNomeLinha, arq);
+    fwrite(r->nomeLinha, sizeof(char), (size_t)r->tamNomeLinha, arq);
   }
   // 4 (byte int) + quantidades de char que tem o nomeLinha
   bytes_usados = bytes_usados + 4 + r->tamNomeLinha;

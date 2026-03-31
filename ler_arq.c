@@ -75,29 +75,25 @@ RegistroDado ler_reg_dado_csv(FILE* arq) {
     
     // valor nomeEstacao não pode ser nulo
     char *nomeEstacao = parse_str_token(&bf_c, ",");
-    char *nomeEstacao_valor;
-    int tamNomeEstacao_valor;
-    if (strcmp(nomeEstacao, "") == 0){
-      nomeEstacao_valor = NULL;
-      tamNomeEstacao_valor = 0;
-    } else {
+    char *nomeEstacao_valor = NULL;
+    int tamNomeEstacao_valor = 0;
+    if (strcmp(nomeEstacao, "") != 0){
       nomeEstacao_valor = strdup(nomeEstacao);
-      tamNomeEstacao_valor = strlen(nomeEstacao);
+      tamNomeEstacao_valor = (int)strlen(nomeEstacao);
     }
+    free(nomeEstacao);
 
     char *codLinha = strsep_n(&bf_c, ",");
     int codLinha_valor = verificar_nulo_fixo(codLinha);
     
     char *nomeLinha = parse_str_token(&bf_c, ",");
-    char *nomeLinha_valor;
-    int tamNomeLinha_valor;
-    if (strcmp(nomeLinha, "") == 0){
-      nomeLinha_valor = NULL;
-      tamNomeLinha_valor = 0;
-    } else {
-      nomeLinha_valor = nomeLinha;
-      tamNomeLinha_valor = strlen(nomeLinha);
+    char *nomeLinha_valor = NULL;
+    int tamNomeLinha_valor = 0;
+    if (strcmp(nomeLinha, "") != 0){
+      nomeLinha_valor = strdup(nomeLinha);
+      tamNomeLinha_valor = (int)strlen(nomeLinha);
     }
+    free(nomeLinha);
 
     char *codProxEstacao = strsep_n(&bf_c, ",");
     int codProxEstacao_valor = verificar_nulo_fixo(codProxEstacao);
@@ -119,6 +115,12 @@ RegistroDado ler_reg_dado_csv(FILE* arq) {
 RegistroDado *ler_reg_dado_bin(FILE* arqBin){
   RegistroDado *r = (RegistroDado*) malloc(sizeof(RegistroDado));
 
+  if (r == NULL) return NULL;
+
+  // inicializando os ponteiros
+  r->nomeEstacao = NULL;
+  r->nomeLinha = NULL;
+
   int bytes_lidos = 0;
 
   fread(&r->removido, sizeof(char), 1, arqBin);
@@ -131,26 +133,24 @@ RegistroDado *ler_reg_dado_bin(FILE* arqBin){
   fread(&r->codEstIntegra, sizeof(int), 1, arqBin);
 
   fread(&r->tamNomeEstacao, sizeof(int), 1, arqBin);
-  // não verificamos que o nomeEstacao pe vazio
+  // não verificamos que o nomeEstacao é vazio
   if (r->tamNomeEstacao > 0){
     // como o nomeEstacao é um ponteiro na struct, é preciso alocar espaço primeiro antes de ler
-    r->nomeEstacao = (char*) malloc(r->tamNomeEstacao + 1);
-    fread(r->nomeEstacao, sizeof(char), r->tamNomeEstacao, arqBin);
-    bytes_lidos += r->tamNomeEstacao;
+    r->nomeEstacao = (char*) malloc((size_t)r->tamNomeEstacao + 1);
+    fread(r->nomeEstacao, sizeof(char), (size_t)r->tamNomeEstacao, arqBin);
   } 
 
   fread(&r->tamNomeLinha, sizeof(int), 1, arqBin);
   if (r->tamNomeLinha > 0){
     // como o nomeLinha é um ponteiro na struct, é preciso alocar espaço primeiro antes de ler
-    r->nomeLinha = (char*) malloc(r->tamNomeLinha + 1);
-    fread(r->nomeLinha, sizeof(char), r->tamNomeLinha, arqBin);
-    bytes_lidos += r->tamNomeLinha;
+    r->nomeLinha = (char*) malloc((size_t)r->tamNomeLinha + 1);
+    fread(r->nomeLinha, sizeof(char), (size_t)r->tamNomeLinha, arqBin);
   } else {
     r->nomeLinha = NULL;
   }
 
-  // quantidade de bytes dos valores fixos (int) + removido(char) + proximo (int)
-  bytes_lidos += 37;
+  // quantidade de bytes dos valores fixos (int) + removido(char) + proximo (int) + bytes dos campos variáveis
+  bytes_lidos = 37 + r->tamNomeEstacao + r->tamNomeLinha;
 
   // se o registro que lemos tem menos de 80 bytes, então pula para o próximo
   int lixo = 80 - bytes_lidos;
@@ -158,12 +158,18 @@ RegistroDado *ler_reg_dado_bin(FILE* arqBin){
     fseek(arqBin, lixo, SEEK_CUR);
   }
 
+  // adicionando \0 nas strings para não imprimir lixo
+  if (r->tamNomeEstacao > 0) r->nomeEstacao[r->tamNomeEstacao] = '\0';
+  if (r->tamNomeLinha > 0) r->nomeLinha[r->tamNomeLinha] = '\0';
+
   return r;
 }
 
 
 RegistroCabecalho *ler_reg_cab_bin(FILE* arqBin){
   RegistroCabecalho *h = (RegistroCabecalho*) malloc(sizeof(RegistroCabecalho));
+
+  if (h == NULL) return NULL;
 
   fread(&h->status, sizeof(char), 1, arqBin);
   fread(&h->topo, sizeof(int), 1, arqBin);

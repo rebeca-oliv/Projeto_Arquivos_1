@@ -1,18 +1,17 @@
 #ifndef LER_ARQ_H
 #define LER_ARQ_H
 
-#include <string.h>
-#include <stdio.h>
+
 #include "structs.h"
 
 /*!
  * @brief Checa se é o fim do arquivo.
  *
- * @param f Arquivo csv para checar. Ele precisa permitir leitura.
+ * @param arq Arquivo csv para checar. Ele precisa permitir leitura.
  *
  * @return Retorna 0 caso seja o fim do arquivo, 1 caso o contrario.
  */
-char check_eof (FILE* f);
+char check_eof (FILE* arq);
 
 /*!
  * @brief Função auxiliar para checa se o valor recebido do arquivo csv é nulo.
