@@ -2,6 +2,10 @@
 #include <stdlib.h>
 #include "structs.h"
 
+void free_reg_cab(RegistroCabecalho* h){
+  free(h);
+}
+
 void free_reg_dado(RegistroDado* r){
   if (r->nomeEstacao != NULL) {
     free(r->nomeEstacao); 
@@ -11,4 +15,5 @@ void free_reg_dado(RegistroDado* r){
     free(r->nomeLinha);
     r->nomeLinha = NULL;
   }
+
 }

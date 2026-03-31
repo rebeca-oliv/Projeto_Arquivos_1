@@ -18,6 +18,7 @@ static char *strsep_n (char **stringp, const char *delim){
   return begin;
 }
 
+
 /*!
   * @brief Lê uma token que é uma string e retorna esta string.
   *
@@ -37,12 +38,14 @@ static char *parse_str_token(char** token_string, const char* delim) {
     return str;
 }
 
+
 char check_eof (FILE* arq){
 	char ch = 0;
 	ch = fgetc(arq);
 	fseek(arq, -1, SEEK_CUR);
 	return (ch==EOF)?0:1;
 }
+
 
 int verificar_nulo_fixo(char *string){
   if (strcmp(string, "") == 0){
@@ -51,6 +54,7 @@ int verificar_nulo_fixo(char *string){
       return atoi(string);
     }
 }
+
 
 RegistroDado ler_reg_dado_csv(FILE* arq) {
     char* bf = calloc(100, sizeof(char));
@@ -110,4 +114,64 @@ RegistroDado ler_reg_dado_csv(FILE* arq) {
     free(bf);
     return (RegistroDado){.removido = '0', .proximo = -1, .codEstacao = codEstacao_valor, .codLinha = codLinha_valor, .codProxEstacao = codProxEstacao_valor, .distProxEstacao = distProxEstacao_valor, .codLinhaIntegra = codLinhaIntegra_valor, .codEstIntegra = codEstIntegra_valor, .tamNomeEstacao = tamNomeEstacao_valor, .nomeEstacao = nomeEstacao_valor, .tamNomeLinha = tamNomeLinha_valor, .nomeLinha = nomeLinha_valor};
 }
+
+
+RegistroDado *ler_reg_dado_bin(FILE* arqBin){
+  RegistroDado *r = (RegistroDado*) malloc(sizeof(RegistroDado));
+
+  int bytes_lidos = 0;
+
+  fread(&r->removido, sizeof(char), 1, arqBin);
+  fread(&r->proximo, sizeof(int), 1, arqBin);
+  fread(&r->codEstacao, sizeof(int), 1, arqBin);
+  fread(&r->codLinha, sizeof(int), 1, arqBin);
+  fread(&r->codProxEstacao, sizeof(int), 1, arqBin);
+  fread(&r->distProxEstacao, sizeof(int), 1, arqBin);
+  fread(&r->codLinhaIntegra, sizeof(int), 1, arqBin);
+  fread(&r->codEstIntegra, sizeof(int), 1, arqBin);
+
+  fread(&r->tamNomeEstacao, sizeof(int), 1, arqBin);
+  // não verificamos que o nomeEstacao pe vazio
+  if (r->tamNomeEstacao > 0){
+    // como o nomeEstacao é um ponteiro na struct, é preciso alocar espaço primeiro antes de ler
+    r->nomeEstacao = (char*) malloc(r->tamNomeEstacao + 1);
+    fread(r->nomeEstacao, sizeof(char), r->tamNomeEstacao, arqBin);
+    bytes_lidos += r->tamNomeEstacao;
+  } 
+
+  fread(&r->tamNomeLinha, sizeof(int), 1, arqBin);
+  if (r->tamNomeLinha > 0){
+    // como o nomeLinha é um ponteiro na struct, é preciso alocar espaço primeiro antes de ler
+    r->nomeLinha = (char*) malloc(r->tamNomeLinha + 1);
+    fread(r->nomeLinha, sizeof(char), r->tamNomeLinha, arqBin);
+    bytes_lidos += r->tamNomeLinha;
+  } else {
+    r->nomeLinha = NULL;
+  }
+
+  // quantidade de bytes dos valores fixos (int) + removido(char) + proximo (int)
+  bytes_lidos += 37;
+
+  // se o registro que lemos tem menos de 80 bytes, então pula para o próximo
+  int lixo = 80 - bytes_lidos;
+  if (lixo > 0){
+    fseek(arqBin, lixo, SEEK_CUR);
+  }
+
+  return r;
+}
+
+
+RegistroCabecalho *ler_reg_cab_bin(FILE* arqBin){
+  RegistroCabecalho *h = (RegistroCabecalho*) malloc(sizeof(RegistroCabecalho));
+
+  fread(&h->status, sizeof(char), 1, arqBin);
+  fread(&h->topo, sizeof(int), 1, arqBin);
+  fread(&h->proxRRN, sizeof(int), 1, arqBin);
+  fread(&h->nroEstacoes, sizeof(int), 1, arqBin);
+  fread(&h->nroParesEstacoes, sizeof(int), 1, arqBin);
+
+  return h;
+}
+
 

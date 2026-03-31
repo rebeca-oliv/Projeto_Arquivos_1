@@ -54,16 +54,25 @@ int main(){
   int opcao;
   scanf("%d", &opcao);
 
+  char nomeArq[100];
+  char nomeArqBin[100];
+
   if (opcao == 1){
-    char nomeArq[100];
-    char nomeArqBin[100];
     scanf("%s %s", nomeArq, nomeArqBin);
-    funcionalidade1(nomeArq, nomeArqBin);
+    criar_arq_bin(nomeArq, nomeArqBin);
     BinarioNaTela(nomeArqBin);
   }
   else if (opcao == 2){
+    scanf("%s", nomeArqBin);
+    mostrar_todos_reg_bin(nomeArqBin);
+  } 
+  else if (opcao == 3){
     char nome[100] = "estacoes.bin";
     BinarioNaTela(nome);
+  } 
+  else if (opcao == 4){
+    scanf("%s", nomeArqBin);
+    mostrar_reg_cab_bin(nomeArqBin);
   }
   else {
     printf("Opção inválida.\n");

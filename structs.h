@@ -25,6 +25,13 @@ typedef struct {
 } RegistroDado;
 
 /*! 
+ * @brief Desaloca os campos dinâmicamente alocados do registro de cabeçalho.
+ * 
+ * @param h Registro de cabeçalho que precisa ser liberado.
+ */
+void free_reg_cab(RegistroCabecalho* h);
+
+/*! 
  * @brief Desaloca os campos dinâmicamente alocados do registro de dado.
  * 
  * @param r Registro de dado que precisa ser liberado.

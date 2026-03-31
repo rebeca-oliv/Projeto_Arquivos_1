@@ -32,4 +32,22 @@ int verificar_nulo_fixo(char *string);
  */
 RegistroDado ler_reg_dado_csv(FILE* f);
 
+/*!
+ * @brief Lê registro de cabeçalho do arquivo bin e resgata os dados para um registro.
+ *
+ * @param arqBin Arquivo bin para ser lido. Precisa estar aberto no modo leitura.
+ *
+ * @return Retorna um RegistroCabecalho com os valores lidos do bin.
+ */
+RegistroCabecalho *ler_reg_cab_bin(FILE* arqBin);
+
+/*!
+ * @brief Lê registro do arquivo bin e resgata os dados para um registro.
+ *
+ * @param arqBin Arquivo bin para ser lido. Precisa estar aberto no modo leitura.
+ *
+ * @return Retorna um RegistroDado com os valores lidos da linha do bin.
+ */
+RegistroDado *ler_reg_dado_bin(FILE* arqBin);
+
 #endif
