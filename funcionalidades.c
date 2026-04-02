@@ -128,14 +128,14 @@ void criar_arq_bin(){
     }
 
     escreve_reg_dado_bin(arqBin, &r);
+
     // soma toda vez que tem um registro novo
     contRRN++;
 
     free_reg_dado(&r);
   }
 
-  // deve ser 1 depois de usar o arquivo para escrita
-  //h->status = '1';
+  h->status = '1';
   h->nroEstacoes = contEstacoes;
   h->proxRRN = contRRN; 
   h->nroParesEstacoes = contPares;
