@@ -53,7 +53,7 @@ void BinarioNaTela(char *arquivo) {
 /* Funcionalidades: 
    
    1. Abrir o arquivo csv
-   2. Criar o arquivo de saída, que deveria ser .bin
+   2. Criar o arquivo de saída, que deve ser .bin
    3. Criar o Registro de Cabeçalho
    4. Armazenar o Reg. de Cabeçalho no arquivo.bin
    5. Ler cada Registro de Dados e armazenar na struct
@@ -259,6 +259,8 @@ void imprimir_reg_cab(RegistroCabecalho *h){
 
 
 // Função para buscar o Registro de Cabeçalho
+//Não precisava para o trabalho 1
+//Usado para debugar o código pelas estudantes 
 void buscar_reg_cab_bin(){
   char nomeArqBin[100];
   scanf("%s", nomeArqBin);
@@ -330,7 +332,7 @@ int verificar_nulo(char *valor){
   3. Quantidade de pares de busca pelo usuário 
   4. Entrada dos valores desejadas pelo usuário
   5. Compara os valores fornecido pelo usuário com os resgistros de dados
-
+  6. Imprime, caso exista
 */
 void buscar_reg_filtro(){
   char nomeArqBin[100];
@@ -369,7 +371,7 @@ void buscar_reg_filtro(){
       if (strcmp(nomesCampos[j], "nomeEstacao") == 0 ||
           strcmp(nomesCampos[j], "nomeLinha") == 0
       ){
-        ScanQuoteString(valoresCampos[j]); // se for string
+        ScanQuoteString(valoresCampos[j]); // se for string, para ler "" 
       } else {
         scanf("%s", valoresCampos[j]);  // se for int
       }
@@ -379,7 +381,7 @@ void buscar_reg_filtro(){
     // mover para o byte 17 para buscar nos dados
     fseek(arqBin, 17, SEEK_SET);
 
-    int encontrou_algum = 0; // para ver se o registro foi encontrado ou não
+    int encontrou_algum = 0; // para ver se o registro foi printado ou não
 
     // fazer busca até o final do arquivo
     while (check_eof(arqBin)){
@@ -390,10 +392,12 @@ void buscar_reg_filtro(){
         int achou = 1; // para verificar se bate com todos os dados especificados, se não mudar, achou
 
         //Verificação se existe valor para cada campo.
-        //Se achou = 1, corresponde que o campo tem valor.
+        //Se achou = 1, corresponde que os valores buscados foram encontrados.
         for (int b = 0; b < quantPar; b++){
 
+          // se o valor da array corresponde ao nome do campo
           if (strcmp(nomesCampos[b], "codEstacao") == 0){
+            // se o valor da array  não corresponde ao valor armazenado na struct
             if (verificar_nulo(valoresCampos[b]) != r->codEstacao) achou = 0;
           }
 

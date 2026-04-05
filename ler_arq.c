@@ -75,23 +75,25 @@ RegistroDado ler_reg_dado_csv(FILE* arq) {
     //Separa cada campo por vírgulas
 
     // valor codEstacao não pode ser nulo
+    // armazena a string 
     char *codEstacao = strsep_n(&bf_c, ",");
     int codEstacao_valor;
-    if (codEstacao == NULL || codEstacao[0] == '\0') {
-      printf("ERRO: valor nulo encontrado.\n");
-      codEstacao_valor = -1;
-    } else {
+    // se tiver vazio
+    if (codEstacao != NULL || codEstacao[0] != '\0') {
+      // faz conversão de string para int
       codEstacao_valor = atoi(codEstacao);
     }
     
     // valor nomeEstacao não pode ser nulo
     //Tratamento para campo de tamanho variável
+    // armazena a string
     char *nomeEstacao = parse_str_token(&bf_c, ",");
     char *nomeEstacao_valor = NULL;
     int tamNomeEstacao_valor = 0;
     if (strcmp(nomeEstacao, "") != 0){
-      nomeEstacao_valor = strdup(nomeEstacao);
-      tamNomeEstacao_valor = (int)strlen(nomeEstacao);
+      // se não for vazio
+      nomeEstacao_valor = strdup(nomeEstacao); // copia o nome
+      tamNomeEstacao_valor = (int)strlen(nomeEstacao); // armazena o tamanho da string
     }
     free(nomeEstacao);
 

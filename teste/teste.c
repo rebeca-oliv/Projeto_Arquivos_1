@@ -1,3 +1,6 @@
+/*
+arquivo para entendermos o trabalho inicialmente
+*/
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
