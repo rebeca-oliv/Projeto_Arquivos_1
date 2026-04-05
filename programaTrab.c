@@ -12,19 +12,6 @@ Rebeca de Oliveira Silva - NUSP: 11963923
 #include "structs.h"
 #include "funcionalidades.h"
 
-RegistroCabecalho le_reg_cab_bin(FILE* arq) {
-    RegistroCabecalho h;
-    
-    fseek(arq, 0, SEEK_SET);
-    
-    fread(&h.status, sizeof(char), 1, arq);
-    fread(&h.topo, sizeof(int), 1, arq);
-    fread(&h.proxRRN, sizeof(int), 1, arq);
-    fread(&h.nroEstacoes, sizeof(int), 1, arq);
-    fread(&h.nroParesEstacoes, sizeof(int), 1, arq);
-    
-    return h;
-}
 
 int main(){
   int opcao;

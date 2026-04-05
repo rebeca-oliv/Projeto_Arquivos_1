@@ -13,6 +13,7 @@ Rebeca de Oliveira Silva - NUSP: 11963923
 #include "escrever_arq.h"
 
 // Função disponibilizada pelo monitor
+// Função que conta e printa na tela do usuário quantidade de binário na tela
 void BinarioNaTela(char *arquivo) {
     FILE *fs;
     if (arquivo == NULL || !(fs = fopen(arquivo, "rb"))) {
@@ -43,7 +44,23 @@ void BinarioNaTela(char *arquivo) {
 }
 
 
-// Funcionalidade 1
+/* ================================================================================
+
+******************************FUNCIONALIDADE 1************************************
+
+===================================================================================*/ 
+
+/* Funcionalidades: 
+   
+   1. Abrir o arquivo csv
+   2. Criar o arquivo de saída, que deveria ser .bin
+   3. Criar o Registro de Cabeçalho
+   4. Armazenar o Reg. de Cabeçalho no arquivo.bin
+   5. Ler cada Registro de Dados e armazenar na struct
+   6. Alocar no arquivo.bin
+   7. Chamar o BinarioNaTela
+
+*/
 void criar_arq_bin(){
   char nomeArq[100];
   char nomeArqBin[100];
@@ -90,6 +107,7 @@ void criar_arq_bin(){
   // 2. lista de vetores com os pares codEstacao e codProxEstacao
   int paresUnicos[1000][2];
 
+  //Enquanto o arquivo csv não acabar, leia linha por linha 
   while (check_eof(arqCsv)){
     RegistroDado r = ler_reg_dado_csv(arqCsv);
 
@@ -135,6 +153,7 @@ void criar_arq_bin(){
     free_reg_dado(&r);
   }
 
+  //Após ler todo o arquivo csv, atribui novas alterações para o Registro de Cabeçalho 
   h->status = '1';
   h->nroEstacoes = contEstacoes;
   h->proxRRN = contRRN; 
@@ -152,6 +171,7 @@ void criar_arq_bin(){
   BinarioNaTela(nomeArqBin);
 }
 
+//=======================================================================================================================================================//
 
 // Função auxiliar para buscas
 void imprimir_reg_dado(RegistroDado *r){
@@ -159,6 +179,8 @@ void imprimir_reg_dado(RegistroDado *r){
   printf("%d ", r->codEstacao);
   printf("%s ", r->nomeEstacao);
 
+  //Verifica se o campo do Reg. Daddos for igual a -1, caso seja deve printar "NULO"
+  //Caso não for nulo, possui um valor que deve ser printado em tela. 
   if (r->codLinha == -1) printf("NULO ");
   else printf("%d ", r->codLinha);
 
@@ -179,7 +201,20 @@ void imprimir_reg_dado(RegistroDado *r){
 }
 
 
-// Funcionalidade 2
+/* ================================================================================
+
+******************************FUNCIONALIDADE 2************************************
+
+===================================================================================*/ 
+
+/* Funcionalidades: 
+
+  1.Abrir o arquivo.bin para leitura
+  2. Ler o arquivo até o final, registro por registro (Linha por linha)
+  3.Caso o registro exista, deve imprimir campo a campo
+
+*/
+
 void buscar_todos_reg_bin(){
   char nomeArqBin[100];
   scanf("%s", nomeArqBin);
@@ -193,12 +228,13 @@ void buscar_todos_reg_bin(){
 
   RegistroCabecalho *h = ler_reg_cab_bin(arqBin);
   // dá erro caso o ponteiro seja NULL ou o arquivo esteja inconsistente
-  if (h == NULL) {
+  if (h == NULL || h->status == '0') {
     printf("Registro inexistente.\n");
     fclose(arqBin);
     return;
   }
 
+  //Enquanto não terminar o arquivo.bin, continue lendo os valores dos registros de dados
   while (check_eof(arqBin)){
     RegistroDado *r = ler_reg_dado_bin(arqBin);
 
@@ -215,6 +251,8 @@ void buscar_todos_reg_bin(){
 
 
 // Função para impressão do Registro de Cabeçalho
+//Não precisava para o trabalho 1
+//Usado para debugar o código pelas estudantes 
 void imprimir_reg_cab(RegistroCabecalho *h){
   printf("%c %d %d %d %d\n", h->status, h->topo, h->proxRRN, h->nroEstacoes, h->nroParesEstacoes);
 }
@@ -279,7 +317,21 @@ int verificar_nulo(char *valor){
 }
 
 
-// Funcionalidade 3
+/* ================================================================================
+
+******************************FUNCIONALIDADE 3************************************
+
+===================================================================================*/ 
+
+/* Funcionalidades: 
+
+  1. Abrir o arquivo.bin para leitura
+  2. Quantidade de buscas pelo usuário
+  3. Quantidade de pares de busca pelo usuário 
+  4. Entrada dos valores desejadas pelo usuário
+  5. Compara os valores fornecido pelo usuário com os resgistros de dados
+
+*/
 void buscar_reg_filtro(){
   char nomeArqBin[100];
   int quantBusca; 
@@ -300,7 +352,7 @@ void buscar_reg_filtro(){
 
   RegistroCabecalho *h = ler_reg_cab_bin(arqBin);
   // dá erro caso o ponteiro seja NULL ou o arquivo esteja inconsistente
-  if (h == NULL) {
+  if (h == NULL || h->status == '0') {
     printf("Registro inexistente.\n");
     fclose(arqBin);
     return;
@@ -310,6 +362,7 @@ void buscar_reg_filtro(){
   for (int i = 0; i < quantBusca; i++){
     scanf("%d", &quantPar); 
 
+    //Quantidade de pares desejadas
     for (int j = 0; j < quantPar; j++){
       scanf("%s", nomesCampos[j]);
 
@@ -336,6 +389,8 @@ void buscar_reg_filtro(){
       if (r != NULL && r->removido == '0'){
         int achou = 1; // para verificar se bate com todos os dados especificados, se não mudar, achou
 
+        //Verificação se existe valor para cada campo.
+        //Se achou = 1, corresponde que o campo tem valor.
         for (int b = 0; b < quantPar; b++){
 
           if (strcmp(nomesCampos[b], "codEstacao") == 0){
@@ -405,7 +460,20 @@ void buscar_reg_filtro(){
 }
 
 
-// Funcionalidade 4
+/* ================================================================================
+
+******************************FUNCIONALIDADE 4************************************
+
+===================================================================================*/ 
+
+/* Funcionalidades: 
+
+  1.Abrir o arquivo.bin para leitura
+  2. Calcula o byteoffset apartir do RRN de entrada
+  3. Move o ponteiro para a posição desejada
+  4. Tratamento de casos de registros removidos
+
+*/
 void buscar_reg_RRN(){
   char nomeArqBin[100];
   int rrn;

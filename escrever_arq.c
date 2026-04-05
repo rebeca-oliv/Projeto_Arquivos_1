@@ -9,6 +9,8 @@ Rebeca de Oliveira Silva - NUSP: 11963923
 
 #include "structs.h"
 
+
+//Valor inicial do cabeçalho
 void inicializar_cabecalho(RegistroCabecalho *h){
   h->status = '0';
   h->topo = -1;

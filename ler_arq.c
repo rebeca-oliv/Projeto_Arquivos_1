@@ -10,6 +10,7 @@ Rebeca de Oliveira Silva - NUSP: 11963923
 #include "ler_arq.h"
 #include "structs.h"
 
+//Reaproveitamento do exemplo dado pelos monitores em sala de aula
 static char *strsep_n (char **stringp, const char *delim){
   char *begin, *end;
   begin = *stringp;
@@ -33,6 +34,8 @@ static char *strsep_n (char **stringp, const char *delim){
   *
   * @return Retorna a string resgatada. Ela é alocada dinâmicamente.
  */
+
+ //Reaproveitamento do exemplo dado pelos monitores em sala de aula
 static char *parse_str_token(char** token_string, const char* delim) {
     char* str_contents = strsep_n(token_string, delim);
     unsigned long str_size = strlen(str_contents);
@@ -43,7 +46,7 @@ static char *parse_str_token(char** token_string, const char* delim) {
     return str;
 }
 
-
+//Reaproveitamento do exemplo dado pelos monitores em sala de aula
 char check_eof (FILE* arq){
 	char ch = 0;
 	ch = fgetc(arq);
@@ -68,6 +71,9 @@ RegistroDado ler_reg_dado_csv(FILE* arq) {
     fgets(bf, 100, arq);
     bf[strcspn(bf, "\r\n")] = '\0';
 
+    //Conversão de string para inteiro em todos os campos
+    //Separa cada campo por vírgulas
+
     // valor codEstacao não pode ser nulo
     char *codEstacao = strsep_n(&bf_c, ",");
     int codEstacao_valor;
@@ -79,6 +85,7 @@ RegistroDado ler_reg_dado_csv(FILE* arq) {
     }
     
     // valor nomeEstacao não pode ser nulo
+    //Tratamento para campo de tamanho variável
     char *nomeEstacao = parse_str_token(&bf_c, ",");
     char *nomeEstacao_valor = NULL;
     int tamNomeEstacao_valor = 0;
@@ -91,6 +98,7 @@ RegistroDado ler_reg_dado_csv(FILE* arq) {
     char *codLinha = strsep_n(&bf_c, ",");
     int codLinha_valor = verificar_nulo_fixo(codLinha);
     
+    //Tratamento para campo de tamanho variável
     char *nomeLinha = parse_str_token(&bf_c, ",");
     char *nomeLinha_valor = NULL;
     int tamNomeLinha_valor = 0;
@@ -116,18 +124,22 @@ RegistroDado ler_reg_dado_csv(FILE* arq) {
     return (RegistroDado){.removido = '0', .proximo = -1, .codEstacao = codEstacao_valor, .codLinha = codLinha_valor, .codProxEstacao = codProxEstacao_valor, .distProxEstacao = distProxEstacao_valor, .codLinhaIntegra = codLinhaIntegra_valor, .codEstIntegra = codEstIntegra_valor, .tamNomeEstacao = tamNomeEstacao_valor, .nomeEstacao = nomeEstacao_valor, .tamNomeLinha = tamNomeLinha_valor, .nomeLinha = nomeLinha_valor};
 }
 
-
+//Lendo o registro do arquivo.bin
 RegistroDado *ler_reg_dado_bin(FILE* arqBin){
   RegistroDado *r = (RegistroDado*) malloc(sizeof(RegistroDado));
 
+  //verifica se a criação ocorreu corretamente
   if (r == NULL) return NULL;
 
   // inicializando os ponteiros
   r->nomeEstacao = NULL;
   r->nomeLinha = NULL;
 
+  //Serve para ler a quantidade de bytes do Registro de Dados, que é 80.
   int bytes_lidos = 0;
 
+  //Lendo cada campo dos registros de dados
+  //Armazenando na struct
   fread(&r->removido, sizeof(char), 1, arqBin);
   fread(&r->proximo, sizeof(int), 1, arqBin);
   fread(&r->codEstacao, sizeof(int), 1, arqBin);
@@ -137,6 +149,7 @@ RegistroDado *ler_reg_dado_bin(FILE* arqBin){
   fread(&r->codLinhaIntegra, sizeof(int), 1, arqBin);
   fread(&r->codEstIntegra, sizeof(int), 1, arqBin);
 
+  //Lê e verifica se o campo do nome não é vazio. 
   fread(&r->tamNomeEstacao, sizeof(int), 1, arqBin);
   // não verificamos que o nomeEstacao é vazio
   if (r->tamNomeEstacao > 0){
@@ -145,9 +158,11 @@ RegistroDado *ler_reg_dado_bin(FILE* arqBin){
     fread(r->nomeEstacao, sizeof(char), (size_t)r->tamNomeEstacao, arqBin);
   } 
 
+  //Lê e verifica se o campo do nome não é vazio. 
   fread(&r->tamNomeLinha, sizeof(int), 1, arqBin);
   if (r->tamNomeLinha > 0){
     // como o nomeLinha é um ponteiro na struct, é preciso alocar espaço primeiro antes de ler
+    //Alocação antes, pois ao debugar estava dando erro sem o malloc
     r->nomeLinha = (char*) malloc((size_t)r->tamNomeLinha + 1);
     fread(r->nomeLinha, sizeof(char), (size_t)r->tamNomeLinha, arqBin);
   } else {
@@ -170,7 +185,9 @@ RegistroDado *ler_reg_dado_bin(FILE* arqBin){
   return r;
 }
 
-
+//Função a parte do trabalho
+//Usada para debugar 
+//Lê o registro de cabeçalho do arquivo.bin
 RegistroCabecalho *ler_reg_cab_bin(FILE* arqBin){
   RegistroCabecalho *h = (RegistroCabecalho*) malloc(sizeof(RegistroCabecalho));
 
