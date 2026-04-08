@@ -71,69 +71,70 @@ RegistroDado ler_reg_dado_csv(FILE* arq) {
     fgets(bf, 100, arq);
     bf[strcspn(bf, "\r\n")] = '\0';
 
-    //Conversão de string para inteiro em todos os campos
+    //Conversão de string para inteiro em todos os campos, exceto os campos variáveis
     //Separa cada campo por vírgulas
 
     // valor codEstacao não pode ser nulo
-    // armazena a string 
-    char *codEstacao = strsep_n(&bf_c, ",");
+    char *codEstacao = strsep_n(&bf_c, ",");  // armazena a string lida do csv 
     int codEstacao_valor;
-    // se tiver vazio
-    if (codEstacao != NULL || codEstacao[0] != '\0') {
-      // faz conversão de string para int
-      codEstacao_valor = atoi(codEstacao);
+    if (codEstacao != NULL || codEstacao[0] != '\0') { // se não tiver vazio
+      codEstacao_valor = atoi(codEstacao); // faz conversão de string para int
     }
     
-    // valor nomeEstacao não pode ser nulo
     //Tratamento para campo de tamanho variável
-    // armazena a string
-    char *nomeEstacao = parse_str_token(&bf_c, ",");
+    char *nomeEstacao = parse_str_token(&bf_c, ","); // armazena a string lida do csv
+    // inicializa os valores para caso não tenha valor
     char *nomeEstacao_valor = NULL;
     int tamNomeEstacao_valor = 0;
-    if (strcmp(nomeEstacao, "") != 0){
-      // se não for vazio
+    if (strcmp(nomeEstacao, "") != 0){ // se não for vazio
       nomeEstacao_valor = strdup(nomeEstacao); // copia o nome
       tamNomeEstacao_valor = (int)strlen(nomeEstacao); // armazena o tamanho da string
     }
-    free(nomeEstacao);
+    free(nomeEstacao); // desalocar no que foi dado no parse_str_token
 
-    char *codLinha = strsep_n(&bf_c, ",");
-    int codLinha_valor = verificar_nulo_fixo(codLinha);
+    char *codLinha = strsep_n(&bf_c, ","); // armazena a string lida do csv
+    int codLinha_valor = verificar_nulo_fixo(codLinha); // se for vazio coloca -1, se não converte o valor para int
     
     //Tratamento para campo de tamanho variável
-    char *nomeLinha = parse_str_token(&bf_c, ",");
+    char *nomeLinha = parse_str_token(&bf_c, ","); // armazena a string lida do csv
+    // inicializa os valores para caso não tenha valor
     char *nomeLinha_valor = NULL;
     int tamNomeLinha_valor = 0;
-    if (strcmp(nomeLinha, "") != 0){
-      nomeLinha_valor = strdup(nomeLinha);
-      tamNomeLinha_valor = (int)strlen(nomeLinha);
+    if (strcmp(nomeLinha, "") != 0){ // se não for vazio
+      nomeLinha_valor = strdup(nomeLinha); // copia o nome
+      tamNomeLinha_valor = (int)strlen(nomeLinha); // armazena o tamanho da string
     }
-    free(nomeLinha);
+    free(nomeLinha); // desalocar no que foi dado no parse_str_token
 
-    char *codProxEstacao = strsep_n(&bf_c, ",");
-    int codProxEstacao_valor = verificar_nulo_fixo(codProxEstacao);
+    char *codProxEstacao = strsep_n(&bf_c, ","); // armazena a string lida do csv
+    int codProxEstacao_valor = verificar_nulo_fixo(codProxEstacao); // se for vazio coloca -1, se não converte o valor para int
 
-    char *distProxEstacao = strsep_n(&bf_c, ",");
-    int distProxEstacao_valor = verificar_nulo_fixo(distProxEstacao);
+    char *distProxEstacao = strsep_n(&bf_c, ","); // armazena a string lida do csv
+    int distProxEstacao_valor = verificar_nulo_fixo(distProxEstacao); // se for vazio coloca -1, se não converte o valor para int
 
-    char *codLinhaIntegra = strsep_n(&bf_c, ",");
-    int codLinhaIntegra_valor = verificar_nulo_fixo(codLinhaIntegra);
+    char *codLinhaIntegra = strsep_n(&bf_c, ","); // armazena a string lida do csv
+    int codLinhaIntegra_valor = verificar_nulo_fixo(codLinhaIntegra); // se for vazio coloca -1, se não converte o valor para int
 
-    char *codEstIntegra = strsep_n(&bf_c, ",");
-    int codEstIntegra_valor = verificar_nulo_fixo(codEstIntegra);
+    char *codEstIntegra = strsep_n(&bf_c, ","); // armazena a string lida do csv
+    int codEstIntegra_valor = verificar_nulo_fixo(codEstIntegra); // se for vazio coloca -1, se não converte o valor para int
 
     free(bf);
+
+    // retornar a struct com os valores lidos do csv
     return (RegistroDado){.removido = '0', .proximo = -1, .codEstacao = codEstacao_valor, .codLinha = codLinha_valor, .codProxEstacao = codProxEstacao_valor, .distProxEstacao = distProxEstacao_valor, .codLinhaIntegra = codLinhaIntegra_valor, .codEstIntegra = codEstIntegra_valor, .tamNomeEstacao = tamNomeEstacao_valor, .nomeEstacao = nomeEstacao_valor, .tamNomeLinha = tamNomeLinha_valor, .nomeLinha = nomeLinha_valor};
 }
 
-//Lendo o registro do arquivo.bin
-RegistroDado *ler_reg_dado_bin(FILE* arqBin){
-  RegistroDado *r = (RegistroDado*) malloc(sizeof(RegistroDado));
 
-  //verifica se a criação ocorreu corretamente
+RegistroDado *ler_reg_dado_bin(FILE* arqBin){
+  RegistroDado *r = NULL; // incialização do Registro de dado
+
+  // aloca memória para o registro de dado
+  r = (RegistroDado*) malloc(sizeof(RegistroDado));
+
+  //verifica se a alocação ocorreu corretamente
   if (r == NULL) return NULL;
 
-  // inicializando os ponteiros
+  // inicializando os ponteiros para os de tamanho variável
   r->nomeEstacao = NULL;
   r->nomeLinha = NULL;
 
@@ -153,7 +154,6 @@ RegistroDado *ler_reg_dado_bin(FILE* arqBin){
 
   //Lê e verifica se o campo do nome não é vazio. 
   fread(&r->tamNomeEstacao, sizeof(int), 1, arqBin);
-  // não verificamos que o nomeEstacao é vazio
   if (r->tamNomeEstacao > 0){
     // como o nomeEstacao é um ponteiro na struct, é preciso alocar espaço primeiro antes de ler
     r->nomeEstacao = (char*) malloc((size_t)r->tamNomeEstacao + 1);
@@ -187,14 +187,20 @@ RegistroDado *ler_reg_dado_bin(FILE* arqBin){
   return r;
 }
 
-//Função a parte do trabalho
-//Usada para debugar 
-//Lê o registro de cabeçalho do arquivo.bin
-RegistroCabecalho *ler_reg_cab_bin(FILE* arqBin){
-  RegistroCabecalho *h = (RegistroCabecalho*) malloc(sizeof(RegistroCabecalho));
 
+RegistroCabecalho *ler_reg_cab_bin(FILE* arqBin){
+  // função criada, principalmente, para debugar o código
+
+  RegistroCabecalho *h = NULL; // incialização do Registro de dado
+
+  // aloca memória para o registro de cabeçalho
+  h = (RegistroCabecalho*) malloc(sizeof(RegistroCabecalho));
+
+  //verifica se a alocação ocorreu corretamente
   if (h == NULL) return NULL;
 
+  //Lendo cada campo do registro de cabeçalho
+  //Armazenando na struct
   fread(&h->status, sizeof(char), 1, arqBin);
   fread(&h->topo, sizeof(int), 1, arqBin);
   fread(&h->proxRRN, sizeof(int), 1, arqBin);

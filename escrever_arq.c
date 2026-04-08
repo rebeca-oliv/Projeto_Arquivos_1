@@ -8,11 +8,11 @@ Rebeca de Oliveira Silva - NUSP: 11963923
 #include <stdlib.h>
 
 #include "structs.h"
+#include "escrever_arq.h"
 
-
-//Valor inicial do cabeçalho
 void inicializar_cabecalho(RegistroCabecalho *h){
-  h->status = '0';
+  //Valores iniciais do cabeçalho, quando cria o bin pela primeira vez
+  h->status = '0'; // 0 para inconsistente
   h->topo = -1;
   h->proxRRN = 0;
   h->nroEstacoes = 0;
@@ -36,6 +36,8 @@ void escreve_reg_dado_bin(FILE* arq, const RegistroDado* r){
   // para calcular se os 80 bytes foram utilizados
   int bytes_usados = 0;
 
+  // inserção do registro de dado no arquivo bin
+  // cada um deve ter 80 bytes
   fwrite(&r->removido, sizeof(char), 1, arq);
   fwrite(&r->proximo, sizeof(int), 1, arq);
   fwrite(&r->codEstacao, sizeof(int), 1, arq);
@@ -49,14 +51,14 @@ void escreve_reg_dado_bin(FILE* arq, const RegistroDado* r){
   bytes_usados += 29;
 
   fwrite(&r->tamNomeEstacao, sizeof(int), 1, arq);
-  if (r->nomeEstacao != NULL){
+  if (r->tamNomeEstacao > 0 && r->nomeEstacao != NULL){ // se for diferente, quer dizer que tem valor
     fwrite(r->nomeEstacao, sizeof(char), (size_t)r->tamNomeEstacao, arq);
   }
   // 4 (byte int) + quantidades de char que tem o nomeEstacao
   bytes_usados = bytes_usados + 4 + r->tamNomeEstacao;
 
   fwrite(&r->tamNomeLinha, sizeof(int), 1, arq);
-  if (r->nomeLinha != NULL){
+  if (r->tamNomeLinha > 0 && r->nomeLinha != NULL){
     fwrite(r->nomeLinha, sizeof(char), (size_t)r->tamNomeLinha, arq);
   }
   // 4 (byte int) + quantidades de char que tem o nomeLinha

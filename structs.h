@@ -6,27 +6,29 @@ Rebeca de Oliveira Silva - NUSP: 11963923
 #ifndef STRUCTS_H
 #define STRUCTS_H
 
+// Struct para o Registro de Cabeçalho - 17 bytes
 typedef struct {
-  char status;
-  int topo;
-  int proxRRN;
-  int nroEstacoes;
-  int nroParesEstacoes;
+  char status;          // char de 1 byte
+  int topo;             // int de 4 bytes
+  int proxRRN;          // int de 4 bytes
+  int nroEstacoes;      // int de 4 bytes
+  int nroParesEstacoes; // int de 4 bytes
 } RegistroCabecalho;
 
+// Struct para o Registro de Dados - cada um terá 80 bytes
 typedef struct {
-  char removido;
-  int proximo;
-  int codEstacao;
-  int codLinha;
-  int codProxEstacao;
-  int distProxEstacao;
-  int codLinhaIntegra;
-  int codEstIntegra;
-  int tamNomeEstacao;
-  char *nomeEstacao;
-  int tamNomeLinha;
-  char *nomeLinha;
+  char removido;        // char de 1 byte
+  int proximo;          // int de 4 bytes
+  int codEstacao;       // int de 4 bytes
+  int codLinha;         // int de 4 bytes
+  int codProxEstacao;   // int de 4 bytes
+  int distProxEstacao;  // int de 4 bytes
+  int codLinhaIntegra;  // int de 4 bytes
+  int codEstIntegra;    // int de 4 bytes
+  int tamNomeEstacao;   // int de 4 bytes
+  char *nomeEstacao;    // string tamanho variável
+  int tamNomeLinha;     // int de 4 bytes
+  char *nomeLinha;      // string tamanho variável
 } RegistroDado;
 
 /*! 
