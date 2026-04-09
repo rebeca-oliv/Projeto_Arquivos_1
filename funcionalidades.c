@@ -101,10 +101,10 @@ void criar_arq_bin(){
   int contRRN = 0, contEstacoes = 0, contPares = 0;
 
   // 1. lista dos nomes das estações únicas
-  char *estacoes[1000];
+  char *estacoes[5000];
 
   // 2. lista de vetores com os pares codEstacao e codProxEstacao
-  int paresUnicos[1000][2];
+  int paresUnicos[5000][2];
 
   //Enquanto o arquivo csv não acabar, leia linha por linha 
   while (check_eof(arqCsv)){
