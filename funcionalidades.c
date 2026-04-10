@@ -101,10 +101,12 @@ void criar_arq_bin(){
   int contRRN = 0, contEstacoes = 0, contPares = 0;
 
   // 1. lista dos nomes das estações únicas
-  char *estacoes[5000];
+  int capEstacoes = 100; // capacidade inicial
+  char **estacoes = (char **) malloc(capEstacoes * sizeof(char *)); 
 
   // 2. lista de vetores com os pares codEstacao e codProxEstacao
-  int paresUnicos[5000][2];
+  int capPares = 100; // capacidade inicial
+  int (*paresUnicos)[2] = malloc(capPares * sizeof(int[2])); 
 
   //Enquanto o arquivo csv não acabar, leia linha por linha 
   while (check_eof(arqCsv)){
@@ -120,9 +122,12 @@ void criar_arq_bin(){
     }
 
     if (!jaTemNome){
-      // 1. faz uma cópia para não ser apagado depois com o free
-      estacoes[contEstacoes] = strdup(r.nomeEstacao);
-      contEstacoes++; // 1. soma toda vez que tem um nome único
+      if (contEstacoes == capEstacoes){ // quer dizer que atingiu limite
+        capEstacoes *= 2; // aumentando a capacidade 
+        estacoes = realloc(estacoes, capEstacoes * sizeof(char *)); // realocando espaço
+      }
+        estacoes[contEstacoes] = strdup(r.nomeEstacao); // 1. faz uma cópia para não ser apagado depois com o free
+        contEstacoes++; // 1. soma toda vez que tem um nome único
     }
 
     // 2. precisa verificar se o par [codEstacao, codProxEstacao] já existe
@@ -137,6 +142,10 @@ void criar_arq_bin(){
       }
 
       if (!jaTemPar){
+        if (contPares == capPares){ // quer dizer que atingiu o limite
+          capPares *= 2; // aumenta a capacidade
+          paresUnicos = realloc(paresUnicos, capPares * sizeof(int[2])); // realocando memória
+        }
         // 2. salvando o novo par
         paresUnicos[contPares][0] = r.codEstacao;
         paresUnicos[contPares][1] = r.codProxEstacao;
@@ -160,14 +169,15 @@ void criar_arq_bin(){
   
   escreve_reg_cab_bin(arqBin, h);
 
-  // dando free na lista de nomes de estações únicas
-  for (int i = 0; i < contEstacoes; i++)
-    free(estacoes[i]);
-
   fclose(arqCsv);
   fclose(arqBin);
 
   free_reg_cab(h);
+  // dando free na lista de nomes de estações únicas
+  for (int i = 0; i < contEstacoes; i++)
+    free(estacoes[i]);
+  free(estacoes);
+  free(paresUnicos);
 
   BinarioNaTela(nomeArqBin);
 }
